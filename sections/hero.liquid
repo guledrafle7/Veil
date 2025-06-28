@@ -1,0 +1,104 @@
+{% comment %}
+  Hero Section for VEIL - Modular, bold, and clean
+  Uses a customizable background image, heading, tagline, and button
+{% endcomment %}
+
+<section class="hero-section">
+  <div class="hero-content">
+    <img src="{{ 'Hands.png' | asset_url }}" alt="Hands" class="hero-hands" />
+    <div class="hero-tagline">No Limits. Just dreams.</div>
+  </div>
+</section>
+
+{% stylesheet %}
+@font-face {
+  font-family: 'Estrella Early';
+  src: url('{{ 'EstrellaEarly.woff2' | asset_url }}') format('woff2'),
+       url('{{ 'EstrellaEarly.woff' | asset_url }}') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+.hero-section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: transparent;
+}
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  z-index: 2;
+}
+.hero-hands {
+  max-width: 480px;
+  width: 48vw;
+  height: auto;
+  margin-bottom: 2.5rem;
+  display: block;
+}
+.hero-tagline {
+  font-family: 'Estrella Early', cursive !important;
+  font-size: 8.16rem;
+  color: #e0e0e0;
+  text-align: center;
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+  word-spacing: 0.2em;
+  margin: 3.5rem 0 0 0;
+  font-weight: normal;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.45), 0 1px 0 #888;
+  padding: 0 1rem;
+}
+@media (max-width: 700px) {
+  .hero-hands {
+    max-width: 300px;
+    width: 80vw;
+    margin-bottom: 1.5rem;
+  }
+  .hero-tagline {
+    font-size: 4.49rem;
+    margin-top: 4rem;
+    padding: 0 0.5rem;
+  }
+}
+{% endstylesheet %}
+
+{% javascript %}
+document.addEventListener('DOMContentLoaded', function() {
+  const hands = document.querySelector('.hero-hands');
+  function animateHands() {
+    const scrollY = window.scrollY;
+    const maxScroll = window.innerHeight * 0.7;
+    const progress = Math.min(scrollY / maxScroll, 1);
+    const scale = 1.2 - 0.3 * progress; // Start at 1.2x for 20% larger
+    const opacity = 1 - progress;
+    hands.style.transform = `translateY(-10%) scale(${scale})`;
+    hands.style.opacity = opacity;
+  }
+  window.addEventListener('scroll', animateHands);
+  animateHands();
+});
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Hero",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading" },
+    { "type": "text", "id": "tagline", "label": "Tagline" },
+    { "type": "text", "id": "button_label", "label": "Button label" },
+    { "type": "url", "id": "button_link", "label": "Button link" }
+  ],
+  "presets": [
+    { "name": "Hero" }
+  ]
+}
+{% endschema %} 
