@@ -6,7 +6,9 @@
 <section class="hero-section">
   <div class="hero-content">
     <img src="{{ 'Hands.png' | asset_url }}" alt="Hands" class="hero-hands" />
-    <div class="hero-tagline">No Limits. Just dreams.</div>
+    <div class="hero-tagline" aria-label="No Limits. Just dreams.">
+      <span>N</span><span>o</span><span>&nbsp;</span><span>L</span><span>i</span><span>m</span><span>i</span><span>t</span><span>s</span><span>.</span><span>&nbsp;</span><span>J</span><span>u</span><span>s</span><span>t</span><span>&nbsp;</span><span>d</span><span>r</span><span>e</span><span>a</span><span>m</span><span>s</span><span>.</span>
+    </div>
   </div>
 </section>
 
@@ -57,6 +59,39 @@
   text-shadow: 0 2px 8px rgba(0,0,0,0.45), 0 1px 0 #888;
   padding: 0 1rem;
 }
+.hero-tagline span {
+  opacity: 0;
+  transform: translateY(-30px);
+  display: inline-block;
+  transition: opacity 0.5s, transform 0.5s;
+}
+.hero-tagline.animated span {
+  opacity: 1;
+  transform: translateY(0);
+}
+.hero-tagline.animated span:nth-child(1) { transition-delay: 0.05s; }
+.hero-tagline.animated span:nth-child(2) { transition-delay: 0.10s; }
+.hero-tagline.animated span:nth-child(3) { transition-delay: 0.15s; }
+.hero-tagline.animated span:nth-child(4) { transition-delay: 0.20s; }
+.hero-tagline.animated span:nth-child(5) { transition-delay: 0.25s; }
+.hero-tagline.animated span:nth-child(6) { transition-delay: 0.30s; }
+.hero-tagline.animated span:nth-child(7) { transition-delay: 0.35s; }
+.hero-tagline.animated span:nth-child(8) { transition-delay: 0.40s; }
+.hero-tagline.animated span:nth-child(9) { transition-delay: 0.45s; }
+.hero-tagline.animated span:nth-child(10) { transition-delay: 0.50s; }
+.hero-tagline.animated span:nth-child(11) { transition-delay: 0.55s; }
+.hero-tagline.animated span:nth-child(12) { transition-delay: 0.60s; }
+.hero-tagline.animated span:nth-child(13) { transition-delay: 0.65s; }
+.hero-tagline.animated span:nth-child(14) { transition-delay: 0.70s; }
+.hero-tagline.animated span:nth-child(15) { transition-delay: 0.75s; }
+.hero-tagline.animated span:nth-child(16) { transition-delay: 0.80s; }
+.hero-tagline.animated span:nth-child(17) { transition-delay: 0.85s; }
+.hero-tagline.animated span:nth-child(18) { transition-delay: 0.90s; }
+.hero-tagline.animated span:nth-child(19) { transition-delay: 0.95s; }
+.hero-tagline.animated span:nth-child(20) { transition-delay: 1.00s; }
+.hero-tagline.animated span:nth-child(21) { transition-delay: 1.05s; }
+.hero-tagline.animated span:nth-child(22) { transition-delay: 1.10s; }
+.hero-tagline.animated span:nth-child(23) { transition-delay: 1.15s; }
 @media (max-width: 700px) {
   .hero-hands {
     max-width: 300px;
@@ -85,6 +120,12 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   window.addEventListener('scroll', animateHands);
   animateHands();
+
+  const tagline = document.querySelector('.hero-tagline');
+  if (tagline) {
+    tagline.classList.remove('animated');
+    setTimeout(() => tagline.classList.add('animated'), 100);
+  }
 });
 {% endjavascript %}
 
