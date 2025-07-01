@@ -6,8 +6,8 @@
 <section class="hero-section">
   <div class="hero-content">
     <img src="{{ 'Hands.png' | asset_url }}" alt="Hands" class="hero-hands" />
-    <div class="hero-tagline" aria-label="No Limits. Just dreams.">
-      <span>N</span><span>o</span><span>&nbsp;</span><span>L</span><span>i</span><span>m</span><span>i</span><span>t</span><span>s</span><span>.</span><span>&nbsp;</span><span>J</span><span>u</span><span>s</span><span>t</span><span>&nbsp;</span><span>d</span><span>r</span><span>e</span><span>a</span><span>m</span><span>s</span><span>.</span>
+    <div class="hero-tagline" aria-label="No Limits. Just dreams." tabindex="0" aria-live="polite">
+      <span>N</span><span>o</span> <span>L</span><span>i</span><span>m</span><span>i</span><span>t</span><span>s</span><span>.</span> <span>J</span><span>u</span><span>s</span><span>t</span> <span>d</span><span>r</span><span>e</span><span>a</span><span>m</span><span>s</span><span>.</span>
     </div>
   </div>
 </section>
@@ -28,7 +28,7 @@
   justify-content: center;
   position: relative;
   width: 100%;
-  overflow: hidden;
+  overflow: visible;
   background: transparent;
 }
 .hero-content {
@@ -47,51 +47,68 @@
   display: block;
 }
 .hero-tagline {
+  position: relative;
+  display: inline-block;
   font-family: 'Estrella Early', cursive !important;
-  font-size: 8.16rem;
+  font-size: clamp(2.2rem, 7vw, 8.16rem);
   color: #e0e0e0;
   text-align: center;
   line-height: 1.05;
   letter-spacing: 0.01em;
   word-spacing: 0.2em;
-  margin: 3.5rem 0 0 0;
+  margin: clamp(1.5rem, 6vw, 3.5rem) 0 0 0;
   font-weight: normal;
   text-shadow: 0 2px 8px rgba(0,0,0,0.45), 0 1px 0 #888;
-  padding: 0 1rem;
+  padding: 0 clamp(0.25rem, 2vw, 1rem);
+  z-index: 10;
 }
 .hero-tagline span {
-  opacity: 0;
-  transform: translateY(-30px);
   display: inline-block;
-  transition: opacity 0.5s, transform 0.5s;
+  transition: transform 0.32s cubic-bezier(0.4, 2, 0.6, 1);
+  will-change: transform;
+  cursor: pointer;
+  --shake-transform: none;
+  transform: var(--shake-transform, none);
 }
-.hero-tagline.animated span {
-  opacity: 1;
-  transform: translateY(0);
+.hero-tagline.shaking span {
+  animation: shake 0.4s infinite linear;
 }
-.hero-tagline.animated span:nth-child(1) { transition-delay: 0.05s; }
-.hero-tagline.animated span:nth-child(2) { transition-delay: 0.10s; }
-.hero-tagline.animated span:nth-child(3) { transition-delay: 0.15s; }
-.hero-tagline.animated span:nth-child(4) { transition-delay: 0.20s; }
-.hero-tagline.animated span:nth-child(5) { transition-delay: 0.25s; }
-.hero-tagline.animated span:nth-child(6) { transition-delay: 0.30s; }
-.hero-tagline.animated span:nth-child(7) { transition-delay: 0.35s; }
-.hero-tagline.animated span:nth-child(8) { transition-delay: 0.40s; }
-.hero-tagline.animated span:nth-child(9) { transition-delay: 0.45s; }
-.hero-tagline.animated span:nth-child(10) { transition-delay: 0.50s; }
-.hero-tagline.animated span:nth-child(11) { transition-delay: 0.55s; }
-.hero-tagline.animated span:nth-child(12) { transition-delay: 0.60s; }
-.hero-tagline.animated span:nth-child(13) { transition-delay: 0.65s; }
-.hero-tagline.animated span:nth-child(14) { transition-delay: 0.70s; }
-.hero-tagline.animated span:nth-child(15) { transition-delay: 0.75s; }
-.hero-tagline.animated span:nth-child(16) { transition-delay: 0.80s; }
-.hero-tagline.animated span:nth-child(17) { transition-delay: 0.85s; }
-.hero-tagline.animated span:nth-child(18) { transition-delay: 0.90s; }
-.hero-tagline.animated span:nth-child(19) { transition-delay: 0.95s; }
-.hero-tagline.animated span:nth-child(20) { transition-delay: 1.00s; }
-.hero-tagline.animated span:nth-child(21) { transition-delay: 1.05s; }
-.hero-tagline.animated span:nth-child(22) { transition-delay: 1.10s; }
-.hero-tagline.animated span:nth-child(23) { transition-delay: 1.15s; }
+.hero-tagline.contracting span {
+  animation: shake-contract 0.18s infinite linear;
+}
+@keyframes shake {
+  0% { --shake-transform: translate(0, 0) rotate(0deg); }
+  10% { --shake-transform: translate(-2px, 1px) rotate(-2deg); }
+  20% { --shake-transform: translate(-1px, -2px) rotate(1deg); }
+  30% { --shake-transform: translate(2px, 1px) rotate(2deg); }
+  40% { --shake-transform: translate(1px, -1px) rotate(-1deg); }
+  50% { --shake-transform: translate(-1px, 2px) rotate(1deg); }
+  60% { --shake-transform: translate(-2px, 1px) rotate(-2deg); }
+  70% { --shake-transform: translate(2px, 1px) rotate(2deg); }
+  80% { --shake-transform: translate(1px, -1px) rotate(-1deg); }
+  90% { --shake-transform: translate(-1px, 2px) rotate(1deg); }
+  100% { --shake-transform: translate(0, 0) rotate(0deg); }
+}
+@keyframes shake-contract {
+  0% { --shake-transform: translate(0, 0) rotate(0deg); }
+  10% { --shake-transform: translate(-1px, 1px) rotate(-4deg); }
+  20% { --shake-transform: translate(-2px, -2px) rotate(3deg); }
+  30% { --shake-transform: translate(2px, 2px) rotate(4deg); }
+  40% { --shake-transform: translate(2px, -1px) rotate(-3deg); }
+  50% { --shake-transform: translate(-2px, 2px) rotate(2deg); }
+  60% { --shake-transform: translate(-2px, 1px) rotate(-4deg); }
+  70% { --shake-transform: translate(2px, 2px) rotate(4deg); }
+  80% { --shake-transform: translate(1px, -2px) rotate(-3deg); }
+  90% { --shake-transform: translate(-2px, 2px) rotate(2deg); }
+  100% { --shake-transform: translate(0, 0) rotate(0deg); }
+}
+@media (max-width: 900px) {
+  .hero-tagline {
+    font-size: clamp(1.5rem, 8vw, 4.5rem);
+    margin-top: 2.5rem;
+    padding: 0 0.5rem;
+  }
+}
 @media (max-width: 700px) {
   .hero-hands {
     max-width: 300px;
@@ -99,10 +116,25 @@
     margin-bottom: 1.5rem;
   }
   .hero-tagline {
-    font-size: 4.49rem;
-    margin-top: 4rem;
-    padding: 0 0.5rem;
+    font-size: clamp(1.2rem, 10vw, 3.2rem);
+    margin-top: 2rem;
+    padding: 0 0.25rem;
+    z-index: 10;
   }
+}
+@media (max-width: 480px) {
+  .hero-tagline {
+    font-size: clamp(1rem, 13vw, 2.2rem);
+    margin-top: 1.2rem;
+    padding: 0 0.1rem;
+  }
+}
+.hero-tagline,
+.hero-tagline span {
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
 }
 {% endstylesheet %}
 
@@ -122,9 +154,188 @@ document.addEventListener('DOMContentLoaded', function() {
   animateHands();
 
   const tagline = document.querySelector('.hero-tagline');
+  const spans = tagline ? tagline.querySelectorAll('span') : [];
+  let originalRects = [];
+  let parentRect = null;
+  let burstOrigin = { x: 0, y: 0 };
+  let animating = false;
+  let holding = false;
+  let docMoveListener = null;
+
+  function storeOriginalRects() {
+    originalRects = [];
+    parentRect = tagline.getBoundingClientRect();
+    spans.forEach(span => {
+      const rect = span.getBoundingClientRect();
+      originalRects.push(rect);
+      span.style.transform = '';
+    });
+  }
+
+  function contractToPoint(x, y) {
+    if (animating && !holding) return;
+    storeOriginalRects();
+    tagline.classList.add('contracting');
+    burstOrigin = { x, y };
+    spans.forEach((span, i) => {
+      const rect = originalRects[i];
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const dx = x - centerX;
+      const dy = y - centerY;
+      span.style.transform = `translate(${dx}px, ${dy}px) var(--shake-transform, none)`;
+    });
+  }
+
+  function getExplosionParams() {
+    const w = window.innerWidth;
+    if (w <= 480) {
+      return { baseDistance: 70, extraDistance: 40, minScale: 0.95, maxScale: 1.2 };
+    } else if (w <= 700) {
+      return { baseDistance: 120, extraDistance: 80, minScale: 1.05, maxScale: 1.5 };
+    } else if (w <= 900) {
+      return { baseDistance: 180, extraDistance: 120, minScale: 1.1, maxScale: 2.2 };
+    } else {
+      return { baseDistance: 260, extraDistance: 220, minScale: 1.2, maxScale: 3.4 };
+    }
+  }
+
+  function burstAndRestore() {
+    if (animating) return;
+    animating = true;
+    tagline.classList.remove('shaking', 'contracting');
+    tagline.classList.add('bursting');
+    // Fully responsive explosion: adjust for all platforms
+    const { baseDistance, extraDistance, minScale, maxScale } = getExplosionParams();
+    spans.forEach((span, i) => {
+      // Extreme explosion: very fast and far at the start
+      const angle = Math.random() * 2 * Math.PI;
+      const distance = baseDistance + Math.random() * extraDistance;
+      const burstX = Math.cos(angle) * distance;
+      const burstY = Math.sin(angle) * distance;
+      const scale = minScale + Math.random() * (maxScale - minScale);
+      // Set burst transition: very fast out, slow at edge
+      span.style.transition = 'transform 0.32s cubic-bezier(0.9,0,0.3,1.3)';
+      span.style.transform = `translate(${burstX}px, ${burstY}px) scale(${scale})`;
+    });
+    // Pause at full expansion before snapping back
+    spans.forEach((span, i) => {
+      setTimeout(() => {
+        // Snappy pull-back
+        span.style.transition = 'transform 0.32s cubic-bezier(0.22, 1.5, 0.56, 1)';
+        span.style.transform = 'translate(0, 0) scale(1)'; // Reset scale on return
+      }, 320 + 180 + i * 60); // 0.32s burst + 0.18s pause
+    });
+    setTimeout(() => {
+      tagline.classList.remove('bursting');
+      spans.forEach(span => {
+        span.style.transition = '';
+      });
+      animating = false;
+    }, 320 + 180 + 320 + spans.length * 60);
+  }
+
   if (tagline) {
-    tagline.classList.remove('animated');
-    setTimeout(() => tagline.classList.add('animated'), 100);
+    setTimeout(() => {
+      storeOriginalRects();
+      // Add unique animation delays to each span for non-uniform shake
+      spans.forEach((span, i) => {
+        span.style.animationDelay = `${(Math.random() * 0.4).toFixed(2)}s`;
+      });
+    }, 1500);
+
+    // Shaking on hover
+    tagline.addEventListener('mouseenter', function(e) {
+      if (!animating && !holding) {
+        storeOriginalRects();
+        // Add unique animation delays to each span for non-uniform shake
+        spans.forEach((span, i) => {
+          span.style.animationDelay = `${(Math.random() * 0.4).toFixed(2)}s`;
+        });
+        tagline.classList.add('shaking');
+      }
+    });
+    tagline.addEventListener('mouseleave', function() {
+      tagline.classList.remove('shaking');
+      // Reset animation delays
+      spans.forEach(span => {
+        span.style.animationDelay = '';
+      });
+    });
+
+    // Black hole on click and hold (lock to initial point)
+    tagline.addEventListener('mousedown', function(e) {
+      if (animating) return;
+      holding = true;
+      tagline.classList.remove('shaking');
+      tagline.classList.add('contracting');
+      storeOriginalRects();
+      // Add smooth transition for contraction
+      spans.forEach(span => {
+        span.style.transition = 'transform 0.45s cubic-bezier(0.4,2,0.6,1)';
+      });
+      // Only contract to the initial click point
+      contractToPoint(e.clientX, e.clientY);
+    });
+
+    // Remove any docMoveListener just in case
+    document.addEventListener('mouseup', function(e) {
+      if (holding) {
+        holding = false;
+        tagline.classList.remove('contracting');
+        burstAndRestore();
+      }
+      if (docMoveListener) {
+        document.removeEventListener('mousemove', docMoveListener);
+        docMoveListener = null;
+      }
+    });
+
+    // Mobile tap/hold support (lock to initial point)
+    let touchTimeout = null;
+    tagline.addEventListener('touchstart', function(e) {
+      if (e.touches.length === 1 && !animating) {
+        tagline.classList.remove('shaking');
+        tagline.classList.add('contracting');
+        storeOriginalRects();
+        const touch = e.touches[0];
+        touchTimeout = setTimeout(() => {
+          holding = true;
+          // Add smooth transition for contraction
+          spans.forEach(span => {
+            span.style.transition = 'transform 0.45s cubic-bezier(0.4,2,0.6,1)';
+          });
+          // Only contract to the initial touch point
+          contractToPoint(touch.clientX, touch.clientY);
+        }, 120); // tap/hold threshold
+      }
+    });
+    // Remove the touchmove handler for contraction
+    // tagline.addEventListener('touchmove', ...);
+    tagline.addEventListener('touchend', function(e) {
+      clearTimeout(touchTimeout);
+      if (holding) {
+        holding = false;
+        tagline.classList.remove('contracting');
+        burstAndRestore();
+      }
+    });
+    tagline.addEventListener('touchcancel', function(e) {
+      clearTimeout(touchTimeout);
+      if (holding) {
+        holding = false;
+        tagline.classList.remove('contracting');
+        burstAndRestore();
+      }
+    });
+
+    // Keyboard accessibility: trigger burst on space/enter
+    tagline.addEventListener('keydown', function(e) {
+      if ((e.key === ' ' || e.key === 'Enter') && !animating && !holding) {
+        e.preventDefault();
+        burstAndRestore();
+      }
+    });
   }
 });
 {% endjavascript %}
