@@ -3,11 +3,14 @@
   Uses a customizable background image, heading, tagline, and button
 {% endcomment %}
 
-<section class="hero-section">
+<section class="hero-section full-width">
   <div class="hero-content">
+    <div class="hero-tagline hero-tagline--left" aria-label="No Limits." tabindex="0" aria-live="polite">
+      <span>N</span><span>o</span> <span>L</span><span>i</span><span>m</span><span>i</span><span>t</span><span>s</span><span>.</span>
+    </div>
     <img src="{{ 'Hands.png' | asset_url }}" alt="Hands" class="hero-hands" />
-    <div class="hero-tagline" aria-label="No Limits. Just dreams." tabindex="0" aria-live="polite">
-      <span>N</span><span>o</span> <span>L</span><span>i</span><span>m</span><span>i</span><span>t</span><span>s</span><span>.</span> <span>J</span><span>u</span><span>s</span><span>t</span> <span>d</span><span>r</span><span>e</span><span>a</span><span>m</span><span>s</span><span>.</span>
+    <div class="hero-tagline hero-tagline--right" aria-label="Just dreams." tabindex="0" aria-live="polite">
+      <span>J</span><span>u</span><span>s</span><span>t</span> <span>d</span><span>r</span><span>e</span><span>a</span><span>m</span><span>s</span><span>.</span>
     </div>
   </div>
 </section>
@@ -21,46 +24,47 @@
   font-style: normal;
   font-display: swap;
 }
-.hero-section {
-  min-height: 100vh;
+.hero-section.full-width {
+  width: 100vw;
+  min-width: 100vw;
+  max-width: 100vw;
+  margin: 0;
+  padding: 0;
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  width: 100%;
+  height: calc(100vh - 5rem - 4rem);
   overflow: visible;
-  background: transparent;
 }
 .hero-content {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   align-items: center;
-  justify-content: center;
-  width: 100%;
-  z-index: 2;
-}
-.hero-hands {
-  max-width: 480px;
-  width: 48vw;
-  height: auto;
-  margin-bottom: 2.5rem;
-  display: block;
+  width: 100vw;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
 }
 .hero-tagline {
-  position: relative;
-  display: inline-block;
   font-family: 'Estrella Early', cursive !important;
-  font-size: clamp(2.2rem, 7vw, 8.16rem);
+  font-size: clamp(4rem, 10vw, 9rem);
   color: #e0e0e0;
-  text-align: center;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.45), 0 1px 0 #888;
+  font-weight: normal;
   line-height: 1.05;
   letter-spacing: 0.01em;
   word-spacing: 0.2em;
-  margin: clamp(1.5rem, 6vw, 3.5rem) 0 0 0;
-  font-weight: normal;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.45), 0 1px 0 #888;
-  padding: 0 clamp(0.25rem, 2vw, 1rem);
-  z-index: 10;
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  transform: translateY(10%);
+  overflow: visible;
 }
 .hero-tagline span {
   display: inline-block;
@@ -68,14 +72,66 @@
   will-change: transform;
   cursor: pointer;
   --shake-transform: none;
-  transform: var(--shake-transform, none);
+  --contract-transform: none;
+  opacity: 0;
+  transform: scale(0);
+}
+.hero-tagline span.pop-in {
+  animation: pop-in 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  pointer-events: none; /* Prevent interaction during pop-in */
+}
+.hero-tagline span.interactive {
+  opacity: 1;
+  transform: scale(1);
+  transition: transform 0.32s cubic-bezier(0.4, 2, 0.6, 1);
+  pointer-events: auto; /* Re-enable interaction */
 }
 .hero-tagline.shaking span {
   animation: shake 0.4s infinite linear;
+  transform: var(--shake-transform, none) !important;
+}
+.hero-tagline.shaking-fast span {
+  animation: shake 0.15s infinite linear;
+  transform: var(--shake-transform, none) !important;
 }
 .hero-tagline.contracting span {
   animation: shake-contract 0.18s infinite linear;
+  transform: var(--contract-transform, none) var(--shake-transform, none) !important;
 }
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(2.5);
+  }
+  60% {
+    transform: scale(0.7);
+  }
+  80% {
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.hero-tagline--left, .hero-tagline--right {
+  justify-self: center;
+  text-align: center;
+  padding: 0;
+}
+.hero-hands {
+  width: clamp(262px, 45vw, 468px);
+  max-width: 100vw;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  justify-self: center;
+}
+
 @keyframes shake {
   0% { --shake-transform: translate(0, 0) rotate(0deg); }
   10% { --shake-transform: translate(-2px, 1px) rotate(-2deg); }
@@ -103,182 +159,193 @@
   100% { --shake-transform: translate(0, 0) rotate(0deg); }
 }
 @media (max-width: 900px) {
-  .hero-tagline {
-    font-size: clamp(1.5rem, 8vw, 4.5rem);
-    margin-top: 2.5rem;
-    padding: 0 0.5rem;
+  .hero-section.full-width {
+    height: auto;
+    min-height: 60vh;
   }
-}
-@media (max-width: 700px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    width: 100vw;
+    gap: 2rem;
+    padding: 2vw 0;
+  }
   .hero-hands {
-    max-width: 300px;
-    width: 80vw;
-    margin-bottom: 1.5rem;
+    width: clamp(150px, 67vw, 262px);
   }
   .hero-tagline {
-    font-size: clamp(1.2rem, 10vw, 3.2rem);
-    margin-top: 2rem;
-    padding: 0 0.25rem;
-    z-index: 10;
+    font-size: clamp(2.2rem, 12vw, 5rem);
+    transform: translateY(8%);
   }
 }
-@media (max-width: 480px) {
+@media (max-width: 600px) {
+  .hero-section.full-width {
+    height: auto;
+    min-height: 40vh;
+  }
+  .hero-hands {
+    width: clamp(94px, 94vw, 169px);
+  }
   .hero-tagline {
-    font-size: clamp(1rem, 13vw, 2.2rem);
-    margin-top: 1.2rem;
-    padding: 0 0.1rem;
+    font-size: clamp(1.4rem, 16vw, 2.8rem);
+    transform: translateY(6%);
   }
-}
-.hero-tagline,
-.hero-tagline span {
-  user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  -moz-user-select: none;
 }
 {% endstylesheet %}
 
 {% javascript %}
 document.addEventListener('DOMContentLoaded', function() {
   const hands = document.querySelector('.hero-hands');
-  function animateHands() {
-    const scrollY = window.scrollY;
-    const maxScroll = window.innerHeight * 0.7;
-    const progress = Math.min(scrollY / maxScroll, 1);
-    const scale = 1.2 - 0.3 * progress; // Start at 1.2x for 20% larger
-    const opacity = 1 - progress;
-    hands.style.transform = `translateY(-10%) scale(${scale})`;
-    hands.style.opacity = opacity;
-  }
-  window.addEventListener('scroll', animateHands);
-  animateHands();
+  hands.style.transform = 'translateY(-10%) scale(1.2)';
+  hands.style.opacity = '1';
 
-  const tagline = document.querySelector('.hero-tagline');
-  const spans = tagline ? tagline.querySelectorAll('span') : [];
-  let originalRects = [];
-  let parentRect = null;
-  let burstOrigin = { x: 0, y: 0 };
-  let animating = false;
-  let holding = false;
-  let docMoveListener = null;
-
-  function storeOriginalRects() {
-    originalRects = [];
-    parentRect = tagline.getBoundingClientRect();
-    spans.forEach(span => {
-      const rect = span.getBoundingClientRect();
-      originalRects.push(rect);
-      span.style.transform = '';
-    });
-  }
-
-  function contractToPoint(x, y) {
-    if (animating && !holding) return;
-    storeOriginalRects();
-    tagline.classList.add('contracting');
-    burstOrigin = { x, y };
-    spans.forEach((span, i) => {
-      const rect = originalRects[i];
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-      const dx = x - centerX;
-      const dy = y - centerY;
-      span.style.transform = `translate(${dx}px, ${dy}px) var(--shake-transform, none)`;
-    });
-  }
-
-  function getExplosionParams() {
-    const w = window.innerWidth;
-    if (w <= 480) {
-      return { baseDistance: 70, extraDistance: 40, minScale: 0.95, maxScale: 1.2 };
-    } else if (w <= 700) {
-      return { baseDistance: 120, extraDistance: 80, minScale: 1.05, maxScale: 1.5 };
-    } else if (w <= 900) {
-      return { baseDistance: 180, extraDistance: 120, minScale: 1.1, maxScale: 2.2 };
-    } else {
-      return { baseDistance: 260, extraDistance: 220, minScale: 1.2, maxScale: 3.4 };
-    }
-  }
-
-  function burstAndRestore() {
-    if (animating) return;
-    animating = true;
-    tagline.classList.remove('shaking', 'contracting');
-    tagline.classList.add('bursting');
-    // Fully responsive explosion: adjust for all platforms
-    const { baseDistance, extraDistance, minScale, maxScale } = getExplosionParams();
-    spans.forEach((span, i) => {
-      // Extreme explosion: very fast and far at the start
-      const angle = Math.random() * 2 * Math.PI;
-      const distance = baseDistance + Math.random() * extraDistance;
-      const burstX = Math.cos(angle) * distance;
-      const burstY = Math.sin(angle) * distance;
-      const scale = minScale + Math.random() * (maxScale - minScale);
-      // Set burst transition: very fast out, slow at edge
-      span.style.transition = 'transform 0.32s cubic-bezier(0.9,0,0.3,1.3)';
-      span.style.transform = `translate(${burstX}px, ${burstY}px) scale(${scale})`;
-    });
-    // Pause at full expansion before snapping back
-    spans.forEach((span, i) => {
-      setTimeout(() => {
-        // Snappy pull-back
-        span.style.transition = 'transform 0.32s cubic-bezier(0.22, 1.5, 0.56, 1)';
-        span.style.transform = 'translate(0, 0) scale(1)'; // Reset scale on return
-      }, 320 + 180 + i * 60); // 0.32s burst + 0.18s pause
-    });
+  // Random cartoony pop-in animation for all taglines (only on load)
+  const allSpans = Array.from(document.querySelectorAll('.hero-tagline span'));
+  const maxDelay = 1200 + 100; // Maximum delay for pop-in animation
+  
+  allSpans.forEach((span, i) => {
+    const delay = Math.random() * 1200 + 100; // Random delay between 100-1300ms
     setTimeout(() => {
-      tagline.classList.remove('bursting');
+      span.classList.add('pop-in');
+    }, delay);
+  });
+
+  // After all pop-in animations complete, enable interactive effects
+  setTimeout(() => {
+    allSpans.forEach(span => {
+      span.classList.remove('pop-in');
+      span.classList.add('interactive');
+    });
+  }, maxDelay + 1200); // Wait for max delay + animation duration
+
+  const taglines = document.querySelectorAll('.hero-tagline');
+  taglines.forEach(function(tagline) {
+    const spans = tagline.querySelectorAll('span');
+    let originalRects = [];
+    let parentRect = null;
+    let burstOrigin = { x: 0, y: 0 };
+    let animating = false;
+    let holding = false;
+    let docMoveListener = null;
+
+    function storeOriginalRects() {
+      originalRects = [];
+      parentRect = tagline.getBoundingClientRect();
       spans.forEach(span => {
-        span.style.transition = '';
+        const rect = span.getBoundingClientRect();
+        originalRects.push(rect);
+        span.style.transform = '';
+        span.style.setProperty('--contract-transform', 'none');
       });
-      animating = false;
-    }, 320 + 180 + 320 + spans.length * 60);
-  }
+    }
 
-  if (tagline) {
-    setTimeout(() => {
+    function contractToPoint(x, y) {
+      if (animating && !holding) return;
       storeOriginalRects();
-      // Add unique animation delays to each span for non-uniform shake
+      tagline.classList.add('contracting');
+      burstOrigin = { x, y };
       spans.forEach((span, i) => {
-        span.style.animationDelay = `${(Math.random() * 0.4).toFixed(2)}s`;
+        const rect = originalRects[i];
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const dx = x - centerX;
+        const dy = y - centerY;
+        // Set the contract transform CSS variable
+        span.style.setProperty('--contract-transform', `translate(${dx}px, ${dy}px)`);
       });
-    }, 1500);
+    }
 
-    // Shaking on hover
+    function getExplosionParams() {
+      const w = window.innerWidth;
+      if (w <= 480) {
+        return { baseDistance: 70, extraDistance: 40, minScale: 0.95, maxScale: 1.2 };
+      } else if (w <= 700) {
+        return { baseDistance: 120, extraDistance: 80, minScale: 1.05, maxScale: 1.5 };
+      } else if (w <= 900) {
+        return { baseDistance: 180, extraDistance: 120, minScale: 1.1, maxScale: 2.2 };
+      } else {
+        return { baseDistance: 260, extraDistance: 220, minScale: 1.2, maxScale: 3.4 };
+      }
+    }
+
+    function burstAndRestore() {
+      if (animating) return;
+      animating = true;
+      tagline.classList.remove('shaking', 'contracting');
+      tagline.classList.add('bursting');
+      const { baseDistance, extraDistance, minScale, maxScale } = getExplosionParams();
+      spans.forEach((span, i) => {
+        const angle = Math.random() * 2 * Math.PI;
+        const distance = baseDistance + Math.random() * extraDistance;
+        const burstX = Math.cos(angle) * distance;
+        const burstY = Math.sin(angle) * distance;
+        const scale = minScale + Math.random() * (maxScale - minScale);
+        span.style.transition = 'transform 0.32s cubic-bezier(0.9,0,0.3,1.3)';
+        span.style.transform = `translate(${burstX}px, ${burstY}px) scale(${scale})`;
+      });
+      spans.forEach((span, i) => {
+        setTimeout(() => {
+          span.style.transition = 'transform 0.32s cubic-bezier(0.22, 1.5, 0.56, 1)';
+          span.style.transform = 'translate(0, 0) scale(1)';
+        }, 320 + 180 + i * 60);
+      });
+      setTimeout(() => {
+        tagline.classList.remove('bursting');
+        spans.forEach(span => {
+          span.style.transition = '';
+        });
+        animating = false;
+      }, 320 + 180 + 320 + spans.length * 60);
+    }
+
+    // --- Hover shake effect (only after pop-in animation completes) ---
     tagline.addEventListener('mouseenter', function(e) {
       if (!animating && !holding) {
-        storeOriginalRects();
-        // Add unique animation delays to each span for non-uniform shake
-        spans.forEach((span, i) => {
-          span.style.animationDelay = `${(Math.random() * 0.4).toFixed(2)}s`;
-        });
-        tagline.classList.add('shaking');
+        const interactiveSpans = tagline.querySelectorAll('span.interactive');
+        if (interactiveSpans.length > 0) {
+          tagline.classList.add('shaking');
+        }
       }
     });
     tagline.addEventListener('mouseleave', function() {
-      tagline.classList.remove('shaking');
-      // Reset animation delays
-      spans.forEach(span => {
-        span.style.animationDelay = '';
-      });
+      tagline.classList.remove('shaking', 'shaking-fast');
+    });
+
+    // --- Click for faster shaking ---
+    tagline.addEventListener('click', function(e) {
+      if (!animating && !holding) {
+        const interactiveSpans = tagline.querySelectorAll('span.interactive');
+        if (interactiveSpans.length > 0) {
+          tagline.classList.remove('shaking');
+          tagline.classList.add('shaking-fast');
+          
+          // Return to normal shaking after 1 second
+          setTimeout(() => {
+            if (tagline.matches(':hover')) {
+              tagline.classList.remove('shaking-fast');
+              tagline.classList.add('shaking');
+            }
+          }, 1000);
+        }
+      }
     });
 
     // Black hole on click and hold (lock to initial point)
     tagline.addEventListener('mousedown', function(e) {
       if (animating) return;
+      const interactiveSpans = tagline.querySelectorAll('span.interactive');
+      if (interactiveSpans.length === 0) return; // Only work after pop-in animation
+      
       holding = true;
       tagline.classList.remove('shaking');
       tagline.classList.add('contracting');
       storeOriginalRects();
-      // Add smooth transition for contraction
       spans.forEach(span => {
         span.style.transition = 'transform 0.45s cubic-bezier(0.4,2,0.6,1)';
       });
-      // Only contract to the initial click point
       contractToPoint(e.clientX, e.clientY);
     });
 
-    // Remove any docMoveListener just in case
     document.addEventListener('mouseup', function(e) {
       if (holding) {
         holding = false;
@@ -295,23 +362,22 @@ document.addEventListener('DOMContentLoaded', function() {
     let touchTimeout = null;
     tagline.addEventListener('touchstart', function(e) {
       if (e.touches.length === 1 && !animating) {
+        const interactiveSpans = tagline.querySelectorAll('span.interactive');
+        if (interactiveSpans.length === 0) return; // Only work after pop-in animation
+        
         tagline.classList.remove('shaking');
         tagline.classList.add('contracting');
         storeOriginalRects();
         const touch = e.touches[0];
         touchTimeout = setTimeout(() => {
           holding = true;
-          // Add smooth transition for contraction
           spans.forEach(span => {
             span.style.transition = 'transform 0.45s cubic-bezier(0.4,2,0.6,1)';
           });
-          // Only contract to the initial touch point
           contractToPoint(touch.clientX, touch.clientY);
-        }, 120); // tap/hold threshold
+        }, 120);
       }
     });
-    // Remove the touchmove handler for contraction
-    // tagline.addEventListener('touchmove', ...);
     tagline.addEventListener('touchend', function(e) {
       clearTimeout(touchTimeout);
       if (holding) {
@@ -332,11 +398,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Keyboard accessibility: trigger burst on space/enter
     tagline.addEventListener('keydown', function(e) {
       if ((e.key === ' ' || e.key === 'Enter') && !animating && !holding) {
+        const interactiveSpans = tagline.querySelectorAll('span.interactive');
+        if (interactiveSpans.length === 0) return; // Only work after pop-in animation
+        
         e.preventDefault();
         burstAndRestore();
       }
     });
-  }
+  });
 });
 {% endjavascript %}
 
