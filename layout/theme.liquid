@@ -13,11 +13,206 @@
     {{ content_for_header }}
   </head>
 
-  <body style="background-image: url('{{ 'Symbol Background.png' | asset_url }}'); background-size: cover; background-position: center; background-attachment: fixed; background-repeat: no-repeat;">
+  <body>
+    <!-- Global Parallax Background Layers -->
+    <div class="global-parallax-container">
+      <div class="parallax-layer parallax-background" style="background-image: url('{{ 'Background.png' | asset_url }}')"></div>
+      <div class="parallax-layer parallax-symbols-bottom" style="background-image: url('{{ 'Symbols Bottom.png' | asset_url }}')"></div>
+      <div class="parallax-layer parallax-symbols-mid" style="background-image: url('{{ 'Symbols Mid.png' | asset_url }}')"></div>
+      <div class="parallax-layer parallax-symbols-top" style="background-image: url('{{ 'Symbols Top.png' | asset_url }}')"></div>
+    </div>
+
     {% sections 'header-group' %}
 
     {{ content_for_layout }}
 
     {% sections 'footer-group' %}
+
+    <script>
+      // Global Parallax Effect
+      document.addEventListener('DOMContentLoaded', function() {
+        const parallaxLayers = {
+          background: document.querySelector('.parallax-background'),
+          symbolsBottom: document.querySelector('.parallax-symbols-bottom'),
+          symbolsMid: document.querySelector('.parallax-symbols-mid'),
+          symbolsTop: document.querySelector('.parallax-symbols-top')
+        };
+
+        // Parallax movement speeds (higher = more movement)
+        // Farthest objects should move the most for proper depth perception
+        const parallaxSpeeds = {
+          background: 0,         // Static background - no movement
+          symbolsBottom: 0.6,    // Farthest - most movement (dramatically increased)
+          symbolsMid: 0.25,      // Medium - moderate movement
+          symbolsTop: 0.05       // Closest - least movement (dramatically reduced)
+        };
+
+        let mouseX = 0;
+        let mouseY = 0;
+        let windowWidth = window.innerWidth;
+        let windowHeight = window.innerHeight;
+        let isMobile = windowWidth <= 600;
+        let deviceOrientation = { x: 0, y: 0 };
+
+        // Update mouse position
+        function updateMousePosition(e) {
+          mouseX = e.clientX;
+          mouseY = e.clientY;
+        }
+
+        // Update device orientation for mobile
+        function updateDeviceOrientation(e) {
+          if (isMobile && e.beta !== null && e.gamma !== null) {
+            // beta is front-to-back tilt (-180 to 180)
+            // gamma is left-to-right tilt (-90 to 90)
+            deviceOrientation.x = (e.gamma / 90) * 2 - 1; // Normalize to -1 to 1
+            deviceOrientation.y = (e.beta / 180) * 2 - 1; // Normalize to -1 to 1
+          }
+        }
+
+        // Calculate parallax movement
+        function updateParallax() {
+          let normalizedX, normalizedY;
+          
+          if (isMobile) {
+            // Use device orientation for mobile
+            normalizedX = deviceOrientation.x;
+            normalizedY = deviceOrientation.y;
+          } else {
+            // Use mouse position for desktop
+            normalizedX = (mouseX / windowWidth) * 2 - 1;
+            normalizedY = (mouseY / windowHeight) * 2 - 1;
+          }
+
+          // Apply parallax to each layer
+          Object.keys(parallaxLayers).forEach(layerKey => {
+            const layer = parallaxLayers[layerKey];
+            const speed = parallaxSpeeds[layerKey];
+            
+            if (layer && speed > 0) { // Only move layers with speed > 0
+              // Invert the movement direction for realistic parallax effect
+              const moveX = -normalizedX * speed * 57.5; // Negative for opposite direction
+              const moveY = -normalizedY * speed * 34.5; // Negative for opposite direction
+              
+              layer.style.transform = `translate(${moveX}px, ${moveY}px)`;
+            }
+          });
+        }
+
+        // Initialize parallax
+        function initParallax() {
+          // Set initial positions
+          mouseX = windowWidth / 2;
+          mouseY = windowHeight / 2;
+          deviceOrientation = { x: 0, y: 0 };
+          
+          // Add event listeners
+          if (!isMobile) {
+            // Mouse movement for desktop
+            document.addEventListener('mousemove', updateMousePosition, { passive: true });
+          } else {
+            // Device orientation for mobile
+            if (window.DeviceOrientationEvent) {
+              window.addEventListener('deviceorientation', updateDeviceOrientation, { passive: true });
+            }
+          }
+          
+          window.addEventListener('resize', () => {
+            windowWidth = window.innerWidth;
+            windowHeight = window.innerHeight;
+            isMobile = windowWidth <= 600;
+            
+            // Update event listeners based on screen size
+            if (isMobile) {
+              // Switch to device orientation
+              document.removeEventListener('mousemove', updateMousePosition);
+              if (window.DeviceOrientationEvent) {
+                window.addEventListener('deviceorientation', updateDeviceOrientation, { passive: true });
+              }
+            } else {
+              // Switch to mouse movement
+              window.removeEventListener('deviceorientation', updateDeviceOrientation);
+              document.addEventListener('mousemove', updateMousePosition, { passive: true });
+            }
+          }, { passive: true });
+          
+          // Start the parallax animation loop
+          function animateParallax() {
+            updateParallax();
+            requestAnimationFrame(animateParallax);
+          }
+          animateParallax();
+        }
+
+        // Initialize parallax after a short delay to ensure everything is loaded
+        setTimeout(initParallax, 100);
+      });
+    </script>
+
+    <style>
+      /* Global Parallax Styles */
+      .global-parallax-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: -1;
+        pointer-events: none;
+      }
+
+      .parallax-layer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        will-change: transform;
+        transition: transform 0.1s ease-out;
+      }
+
+      .parallax-background {
+        z-index: 1;
+        transform: translateZ(0);
+      }
+
+      .parallax-symbols-bottom {
+        z-index: 2;
+        transform: translateZ(0);
+      }
+
+      .parallax-symbols-mid {
+        z-index: 3;
+        transform: translateZ(0);
+      }
+
+      .parallax-symbols-top {
+        z-index: 4;
+        transform: translateZ(0);
+      }
+
+      /* Ensure body content is above parallax */
+      body {
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 900px) {
+        .parallax-layer {
+          transition: transform 0.08s ease-out;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .parallax-layer {
+          transition: transform 0.1s ease-out;
+        }
+      }
+    </style>
   </body>
 </html>

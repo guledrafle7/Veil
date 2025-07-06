@@ -1,17 +1,25 @@
 <header>
   <div class="header__container">
-    <h2 class="header__title">
-      <a href="/">VEIL</a>
-    </h2>
-    <nav class="header__menu">
-      {% for link in section.settings.menu.links %}
-        {{ link.title | link_to: link.url }}
-      {% endfor %}
-    </nav>
-    <div class="header__icons">
+    <div class="header__icon header__icon--left">
       {% if shop.customer_accounts_enabled %}
         {{ 'icon-account.svg' | inline_asset_content | link_to: routes.account_url }}
       {% endif %}
+    </div>
+    <div class="header__logo">
+      <span class="header__logo-main">
+        {{ 'Eyeline.svg' | inline_asset_content }}
+      </span>
+      <span class="header__logo-dots" style="display: none;">
+        {{ 'eyeline dots.svg' | inline_asset_content }}
+      </span>
+      <span class="header__logo-pupil header__logo-pupil--left">
+        {{ 'pupil left.svg' | inline_asset_content }}
+      </span>
+      <span class="header__logo-pupil header__logo-pupil--right">
+        {{ 'pupil right.svg' | inline_asset_content }}
+      </span>
+    </div>
+    <div class="header__icon header__icon--right">
       <a href="{{ routes.cart_url }}">
         {% if cart.item_count > 0 %}
           <sup>{{ cart.item_count }}</sup>
@@ -31,61 +39,86 @@
     z-index: 1000;
     height: 5rem;
     width: 100%;
-    background: rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
+    background: transparent;
+    backdrop-filter: none;
     transition: background 0.3s ease;
   }
   .header__container {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: space-between;
     height: 100%;
     max-width: 1200px;
     margin: 0 auto;
     width: 100%;
     padding: 0 2rem;
   }
-  .header__title {
-    flex: 1;
-    font-weight: bold;
-    color: white;
-    font-size: 1.5rem;
-    margin-right: 2rem;
-  }
-  .header__title a {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    letter-spacing: 0.1em;
-  }
-  .header__menu {
-    flex: 2;
+  .header__icon {
     display: flex;
+    align-items: center;
     justify-content: center;
-    gap: 2rem;
+    min-width: 3rem;
+    min-height: 3rem;
   }
-  .header__menu a {
-    color: white;
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 1rem;
+  .header__icon--left {
+    justify-self: start;
   }
-  .header__icons {
-    flex: 1;
+  .header__icon--right {
+    justify-self: end;
+  }
+  .header__logo {
+    --logo-stroke: white;
+    height: 4.32rem;
+    transform: translateY(1.44rem);
+    position: relative;
     display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
+    align-items: center;
+    justify-content: center;
   }
-  .header__icons a {
+  .header__logo-main {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  .header__logo-main svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .header__logo-dots {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .header__logo-dots svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    transform: translateY(0.4rem) scale(0.6);
+  }
+  .header__logo svg, .header__logo svg * {
+    stroke: var(--logo-stroke) !important;
+    fill: var(--logo-stroke) !important;
+    color: var(--logo-stroke) !important;
+  }
+  .header__icon a {
     color: white;
     text-decoration: none;
     position: relative;
+    display: flex;
+    align-items: center;
   }
-  .header__icons svg {
+  .header__icon svg {
     width: 2rem;
     filter: brightness(0) invert(1);
+    transform: scale(1.5);
   }
-  .header__icons sup {
+  .header__icon sup {
     position: absolute;
     left: 100%;
     color: white;
@@ -93,6 +126,43 @@
   }
   body {
     padding-top: 5rem;
+  }
+  /* Homepage only: white logo, 20% larger, moved down */
+  html[data-template*='index'] .header__logo {
+    --logo-stroke: white !important;
+    height: 3.84rem !important;
+    transform: translateY(0.5rem) !important;
+  }
+  .header__logo-pupil {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 3;
+    transition: transform 0.25s cubic-bezier(0.4, 2, 0.6, 1);
+  }
+  .header__logo-pupil svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .header__logo-pupil--left {
+    left: 19.5%;
+    top: 45%;
+    width: 12%;
+    height: 20.8%;
+    transform: none;
+    z-index: 4;
+  }
+  .header__logo-pupil--right {
+    left: 70.5%;
+    top: 45%;
+    width: 12%;
+    height: 20.8%;
+    transform: none;
+    z-index: 4;
   }
 {% endstylesheet %}
 
@@ -106,6 +176,52 @@
         header.classList.remove('scrolled');
       }
     });
+
+    // --- Pupil Mouse Tracking (across the whole page, independent for each pupil) ---
+    const logo = document.querySelector('.header__logo');
+    const leftPupil = document.querySelector('.header__logo-pupil--left');
+    const rightPupil = document.querySelector('.header__logo-pupil--right');
+    let inactivityTimeout = null;
+    let lastMove = Date.now();
+
+    // Pupil movement parameters (in % of logo size)
+    const maxOffsetX = 0.11; // 11% of logo width
+    const maxOffsetY = 0.13; // 13% of logo height
+
+    // Eye centers as % of logo (match CSS left/top + half width/height)
+    const leftEye = { x: 19.5 + 6, y: 45 + 10.4 }; // left + half width, top + half height
+    const rightEye = { x: 70.5 + 6, y: 45 + 10.4 };
+
+    function movePupils(event) {
+      if (!logo) return;
+      const rect = logo.getBoundingClientRect();
+      // Mouse position as % of logo
+      const mouseXPct = ((event.clientX - rect.left) / rect.width) * 100;
+      const mouseYPct = ((event.clientY - rect.top) / rect.height) * 100;
+      // For each pupil, calculate offset from its eye center
+      const leftNormX = Math.max(-1, Math.min(1, (mouseXPct - leftEye.x) / (12 / 2)));
+      const leftNormY = Math.max(-1, Math.min(1, (mouseYPct - leftEye.y) / (20.8 / 2)));
+      const rightNormX = Math.max(-1, Math.min(1, (mouseXPct - rightEye.x) / (12 / 2)));
+      const rightNormY = Math.max(-1, Math.min(1, (mouseYPct - rightEye.y) / (20.8 / 2)));
+      // Calculate offset in px
+      const leftOffsetX = leftNormX * rect.width * maxOffsetX;
+      const leftOffsetY = leftNormY * rect.height * maxOffsetY;
+      const rightOffsetX = rightNormX * rect.width * maxOffsetX;
+      const rightOffsetY = rightNormY * rect.height * maxOffsetY;
+      leftPupil.style.transform = `translate(${leftOffsetX}px, ${leftOffsetY}px)`;
+      rightPupil.style.transform = `translate(${rightOffsetX}px, ${rightOffsetY}px)`;
+      lastMove = Date.now();
+      if (inactivityTimeout) clearTimeout(inactivityTimeout);
+      inactivityTimeout = setTimeout(resetPupils, 1500);
+    }
+    function resetPupils() {
+      leftPupil.style.transform = 'translate(0,0)';
+      rightPupil.style.transform = 'translate(0,0)';
+    }
+    if (logo && leftPupil && rightPupil) {
+      window.addEventListener('mousemove', movePupils);
+      window.addEventListener('mouseout', resetPupils);
+    }
   });
 {% endjavascript %}
 

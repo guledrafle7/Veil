@@ -24,29 +24,33 @@
   font-style: normal;
   font-display: swap;
 }
-.hero-section.full-width {
-  width: 100vw;
-  min-width: 100vw;
-  max-width: 100vw;
-  margin: 0;
-  padding: 0;
-  background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: calc(100vh - 5rem - 4rem);
-  overflow: visible;
-}
-.hero-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  align-items: center;
-  width: 100vw;
-  height: 100%;
-  padding: 0;
-  margin: 0;
-  overflow: visible;
-}
+
+
+
+  .hero-section.full-width {
+    width: 100vw;
+    min-width: 100vw;
+    max-width: 100vw;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(100vh - 5rem - 4rem);
+    overflow: visible;
+  }
+
+  .hero-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    width: 100vw;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    overflow: visible;
+  }
 .hero-tagline {
   font-family: 'Estrella Early', cursive !important;
   font-size: clamp(4rem, 10vw, 9rem);
@@ -130,7 +134,41 @@
   display: block;
   margin: 0 auto;
   justify-self: center;
+  opacity: 0;
+  transform: scale(0) translateY(-10%);
+  transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.6s ease;
 }
+
+.hero-hands.interactive {
+  transform: scale(1.3) translateY(-10%);
+}
+
+.hero-hands.pop-in {
+  animation: hands-pop-in 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes hands-pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0) translateY(-10%);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1.69) translateY(-10%);
+  }
+  60% {
+    transform: scale(0.5915) translateY(-10%);
+  }
+  80% {
+    transform: scale(1.014) translateY(-10%);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.3) translateY(-10%);
+  }
+}
+
+
 
 @keyframes shake {
   0% { --shake-transform: translate(0, 0) rotate(0deg); }
@@ -177,6 +215,11 @@
     font-size: clamp(2.2rem, 12vw, 5rem);
     transform: translateY(8%);
   }
+  
+  /* Adjust parallax effect for tablet */
+  .parallax-layer {
+    transition: transform 0.08s ease-out;
+  }
 }
 @media (max-width: 600px) {
   .hero-section.full-width {
@@ -190,15 +233,18 @@
     font-size: clamp(1.4rem, 16vw, 2.8rem);
     transform: translateY(6%);
   }
+  
+  /* Optimize parallax for mobile device orientation */
+  .parallax-layer {
+    transition: transform 0.1s ease-out;
+  }
 }
 {% endstylesheet %}
 
 {% javascript %}
 document.addEventListener('DOMContentLoaded', function() {
   const hands = document.querySelector('.hero-hands');
-  hands.style.transform = 'translateY(-10%) scale(1.2)';
-  hands.style.opacity = '1';
-
+  
   // Random cartoony pop-in animation for all taglines (only on load)
   const allSpans = Array.from(document.querySelectorAll('.hero-tagline span'));
   const maxDelay = 1200 + 100; // Maximum delay for pop-in animation
@@ -209,9 +255,15 @@ document.addEventListener('DOMContentLoaded', function() {
       span.classList.add('pop-in');
     }, delay);
   });
-
+  
+  // Start hands animation at the same time as letters
+  setTimeout(() => {
+    hands.classList.add('pop-in');
+  }, 100); // Start almost immediately with letters
+  
   // After all pop-in animations complete, enable interactive effects
   setTimeout(() => {
+    // Enable interactive effects for letters
     allSpans.forEach(span => {
       span.classList.remove('pop-in');
       span.classList.add('interactive');

@@ -1,42 +1,31 @@
+{% comment %} Footer Section {% endcomment %}
 <footer>
-  <div class="footer__copyright">
-    &copy;
-    {{ 'now' | date: '%Y' }}
-    {{ shop.name | link_to: routes.root_url }}, {{ powered_by_link }}
-  </div>
-
-  <div class="footer__links">
-    {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
-    {% endfor %}
-  </div>
-
-  <div class="footer__payment">
-    {% if section.settings.show_payment_icons %}
-      {% for type in shop.enabled_payment_types %}
-        {{ type | payment_type_svg_tag }}
-      {% endfor %}
-    {% endif %}
+  <div class="footer__container">
+    <div class="footer__content">
+      &copy; {{ 'now' | date: '%Y' }} VEIL. All rights reserved.
+    </div>
   </div>
 </footer>
 
 {% stylesheet %}
-  footer {
-    display: flex;
-    justify-content: space-between;
-    padding: 1rem 2rem;
-    background: rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
-  }
-  footer a {
-    text-decoration: none;
-    color: var(--color-foreground);
-  }
-  footer .footer__links,
-  footer .footer__payment {
-    display: flex;
-    gap: 1rem;
-  }
+footer {
+  width: 100%;
+  background: transparent;
+  backdrop-filter: none;
+  padding: 2rem 0 1rem 0;
+}
+.footer__container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+.footer__content {
+  text-align: center;
+  color: #e0e0e0;
+  font-size: 1rem;
+  width: 100%;
+}
 {% endstylesheet %}
 
 {% schema %}
