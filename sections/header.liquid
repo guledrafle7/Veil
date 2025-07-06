@@ -6,9 +6,9 @@
       {% endif %}
     </div>
     <div class="header__logo">
-      <span class="header__logo-main">
-        {{ 'Eyeline.svg' | inline_asset_content }}
-      </span>
+      <a href="{{ routes.root_url }}" class="header__logo-main" aria-label="Home">
+        {{ 'eyeline filled.svg' | inline_asset_content }}
+      </a>
       <span class="header__logo-dots" style="display: none;">
         {{ 'eyeline dots.svg' | inline_asset_content }}
       </span>
@@ -101,11 +101,11 @@
     display: block;
     transform: translateY(0.4rem) scale(0.6);
   }
-  .header__logo svg, .header__logo svg * {
+  /* .header__logo svg, .header__logo svg * {
     stroke: var(--logo-stroke) !important;
-    fill: var(--logo-stroke) !important;
-    color: var(--logo-stroke) !important;
-  }
+    // fill: var(--logo-stroke) !important;
+    // color: var(--logo-stroke) !important;
+  } */
   .header__icon a {
     color: white;
     text-decoration: none;
@@ -177,7 +177,7 @@
       }
     });
 
-    // --- Pupil Mouse Tracking (across the whole page, independent for each pupil) ---
+    // --- Pupil Tracking: Mouse (desktop) or Touch (mobile/tablet) ---
     const logo = document.querySelector('.header__logo');
     const leftPupil = document.querySelector('.header__logo-pupil--left');
     const rightPupil = document.querySelector('.header__logo-pupil--right');
@@ -192,35 +192,53 @@
     const leftEye = { x: 19.5 + 6, y: 45 + 10.4 }; // left + half width, top + half height
     const rightEye = { x: 70.5 + 6, y: 45 + 10.4 };
 
-    function movePupils(event) {
-      if (!logo) return;
+    function setPupilTransforms(leftNormX, leftNormY, rightNormX, rightNormY) {
       const rect = logo.getBoundingClientRect();
-      // Mouse position as % of logo
-      const mouseXPct = ((event.clientX - rect.left) / rect.width) * 100;
-      const mouseYPct = ((event.clientY - rect.top) / rect.height) * 100;
-      // For each pupil, calculate offset from its eye center
-      const leftNormX = Math.max(-1, Math.min(1, (mouseXPct - leftEye.x) / (12 / 2)));
-      const leftNormY = Math.max(-1, Math.min(1, (mouseYPct - leftEye.y) / (20.8 / 2)));
-      const rightNormX = Math.max(-1, Math.min(1, (mouseXPct - rightEye.x) / (12 / 2)));
-      const rightNormY = Math.max(-1, Math.min(1, (mouseYPct - rightEye.y) / (20.8 / 2)));
-      // Calculate offset in px
       const leftOffsetX = leftNormX * rect.width * maxOffsetX;
       const leftOffsetY = leftNormY * rect.height * maxOffsetY;
       const rightOffsetX = rightNormX * rect.width * maxOffsetX;
       const rightOffsetY = rightNormY * rect.height * maxOffsetY;
       leftPupil.style.transform = `translate(${leftOffsetX}px, ${leftOffsetY}px)`;
       rightPupil.style.transform = `translate(${rightOffsetX}px, ${rightOffsetY}px)`;
+    }
+
+    function movePupilsPointer(x, y) {
+      if (!logo) return;
+      const rect = logo.getBoundingClientRect();
+      const pointerXPct = ((x - rect.left) / rect.width) * 100;
+      const pointerYPct = ((y - rect.top) / rect.height) * 100;
+      const leftNormX = Math.max(-1, Math.min(1, (pointerXPct - leftEye.x) / (12 / 2)));
+      const leftNormY = Math.max(-1, Math.min(1, (pointerYPct - leftEye.y) / (20.8 / 2)));
+      const rightNormX = Math.max(-1, Math.min(1, (pointerXPct - rightEye.x) / (12 / 2)));
+      const rightNormY = Math.max(-1, Math.min(1, (pointerYPct - rightEye.y) / (20.8 / 2)));
+      setPupilTransforms(leftNormX, leftNormY, rightNormX, rightNormY);
       lastMove = Date.now();
       if (inactivityTimeout) clearTimeout(inactivityTimeout);
       inactivityTimeout = setTimeout(resetPupils, 1500);
     }
+
+    function movePupilsMouse(event) {
+      movePupilsPointer(event.clientX, event.clientY);
+    }
+
+    function movePupilsTouch(event) {
+      if (!event.touches || event.touches.length === 0) return;
+      const touch = event.touches[0];
+      movePupilsPointer(touch.clientX, touch.clientY);
+    }
+
     function resetPupils() {
       leftPupil.style.transform = 'translate(0,0)';
       rightPupil.style.transform = 'translate(0,0)';
     }
+
     if (logo && leftPupil && rightPupil) {
-      window.addEventListener('mousemove', movePupils);
+      window.addEventListener('mousemove', movePupilsMouse);
       window.addEventListener('mouseout', resetPupils);
+      window.addEventListener('touchstart', movePupilsTouch);
+      window.addEventListener('touchmove', movePupilsTouch);
+      window.addEventListener('touchend', resetPupils);
+      window.addEventListener('touchcancel', resetPupils);
     }
   });
 {% endjavascript %}
