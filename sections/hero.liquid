@@ -16,17 +16,6 @@
 </section>
 
 {% stylesheet %}
-@font-face {
-  font-family: 'Estrella Early';
-  src: url('{{ 'EstrellaEarly.woff2' | asset_url }}') format('woff2'),
-       url('{{ 'EstrellaEarly.woff' | asset_url }}') format('woff');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-
-
   .hero-section.full-width {
     width: 100vw;
     min-width: 100vw;
@@ -52,8 +41,8 @@
     overflow: visible;
   }
 .hero-tagline {
-  font-family: 'Estrella Early', cursive !important;
-  font-size: clamp(4rem, 10vw, 9rem);
+  font-family: 'Pally Bold', cursive !important;
+  font-size: clamp(3.2rem, 8vw, 7.2rem);
   color: #e0e0e0;
   text-shadow: 0 2px 8px rgba(0,0,0,0.45), 0 1px 0 #888;
   font-weight: normal;
@@ -126,6 +115,12 @@
   justify-self: center;
   text-align: center;
   padding: 0;
+}
+.hero-tagline--right {
+  justify-self: center;
+  text-align: center;
+  padding: 0;
+  margin-left: -10%;
 }
 .hero-hands {
   width: clamp(262px, 45vw, 468px);
@@ -212,7 +207,7 @@
     width: clamp(150px, 67vw, 262px);
   }
   .hero-tagline {
-    font-size: clamp(2.2rem, 12vw, 5rem);
+    font-size: clamp(1.76rem, 9.6vw, 4rem);
     transform: translateY(8%);
   }
   
@@ -230,7 +225,7 @@
     width: clamp(94px, 94vw, 169px);
   }
   .hero-tagline {
-    font-size: clamp(1.4rem, 16vw, 2.8rem);
+    font-size: clamp(1.12rem, 12.8vw, 2.24rem);
     transform: translateY(6%);
   }
   
@@ -355,12 +350,20 @@ document.addEventListener('DOMContentLoaded', function() {
       if (!animating && !holding) {
         const interactiveSpans = tagline.querySelectorAll('span.interactive');
         if (interactiveSpans.length > 0) {
+          interactiveSpans.forEach(span => {
+            // Add a random animation delay for more natural, non-uniform shake
+            span.style.animationDelay = (Math.random() * 0.4).toFixed(3) + 's';
+          });
           tagline.classList.add('shaking');
         }
       }
     });
     tagline.addEventListener('mouseleave', function() {
       tagline.classList.remove('shaking', 'shaking-fast');
+      // Reset animation delay
+      spans.forEach(span => {
+        span.style.animationDelay = '';
+      });
     });
 
     // --- Click for faster shaking ---
@@ -368,14 +371,21 @@ document.addEventListener('DOMContentLoaded', function() {
       if (!animating && !holding) {
         const interactiveSpans = tagline.querySelectorAll('span.interactive');
         if (interactiveSpans.length > 0) {
+          interactiveSpans.forEach(span => {
+            // Add a random animation delay for more natural, non-uniform shake
+            span.style.animationDelay = (Math.random() * 0.15).toFixed(3) + 's';
+          });
           tagline.classList.remove('shaking');
           tagline.classList.add('shaking-fast');
-          
           // Return to normal shaking after 1 second
           setTimeout(() => {
             if (tagline.matches(':hover')) {
               tagline.classList.remove('shaking-fast');
               tagline.classList.add('shaking');
+              // Re-randomize delays for normal shake
+              interactiveSpans.forEach(span => {
+                span.style.animationDelay = (Math.random() * 0.4).toFixed(3) + 's';
+              });
             }
           }, 1000);
         }

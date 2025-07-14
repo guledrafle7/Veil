@@ -1,0 +1,17 @@
+{
+  "name": "veil-theme",
+  "version": "1.0.0",
+  "description": "Custom Shopify theme for Veil Dreams",
+  "scripts": {
+    "dev": "shopify theme dev",
+    "deploy": "shopify theme push",
+    "pull": "shopify theme pull"
+  },
+  "devDependencies": {
+    "@shopify/cli": "^3.0.0",
+    "@shopify/theme": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+} 

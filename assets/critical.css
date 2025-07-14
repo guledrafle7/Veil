@@ -1,3 +1,12 @@
+@font-face {
+  font-family: 'Pally Bold';
+  src: url('./Pally_Bold.woff2') format('woff2'),
+       url('./Pally_Bold.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 /** Critical CSS for the theme. This file is included on every page. */
 
 /* Reset styles inspired by https://www.joshwcomeau.com/css/custom-css-reset/ */
